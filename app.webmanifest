@@ -1,0 +1,15 @@
+{
+ "name": "Accutemp Field Reference",
+ "short_name": "Accutemp Ref",
+ "description": "Accutemp field reference cards for HVAC/R techs. Works offline after the first visit.",
+ "start_url": "./",
+ "scope": "./",
+ "display": "standalone",
+ "background_color": "#ececec",
+ "theme_color": "#14324f",
+ "icons": [
+  { "src": "app-icon-192.png", "sizes": "192x192", "type": "image/png" },
+  { "src": "app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+  { "src": "app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+ ]
+}
