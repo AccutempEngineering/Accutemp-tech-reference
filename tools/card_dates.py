@@ -20,8 +20,20 @@ def git(*a):
     return subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True, check=True).stdout
 
 
-def norm(title, nodes):
-    own = "".join(n["html"] for n in nodes if "html" in n)
+def own_html(c):
+    """The card's own text: stored HTML pieces, or the simple fields used by newer cards."""
+    nodes = c.get("content", [])
+    if nodes:
+        return "".join(n["html"] for n in nodes if "html" in n)
+    parts = [c.get("intro", "")]
+    parts += [r[0] + " " + r[1] for r in c.get("rows", [])]
+    parts += [c.get("tip", "")]
+    parts += [s.get("name", "") + " " + s.get("url", "") for s in c.get("sources", [])]
+    return " ".join(parts)
+
+
+def norm(c):
+    title, own = c["title"], own_html(c)
     txt = html.unescape(re.sub(r"<[^>]+>", " ", title + " " + own))
     return re.sub(r"\s+", " ", txt).strip()
 
@@ -67,15 +79,15 @@ def main():
             except Exception:
                 continue
             for c in cards:
-                first_seen.setdefault(norm(c["title"], c.get("content", [])), date)
+                first_seen.setdefault(norm(c), date)
     data = load()
     missing = []
     for t in data["tabs"]:
         for c in walk(t["content"]):
-            if "html" not in "".join(k for n in c.get("content", []) for k in n) and not c.get("body"):
+            if not own_html(c).strip():
                 c.pop("updated", None)  # pure group header, nothing to date
                 continue
-            d = first_seen.get(norm(c["title"], c.get("content", [])))
+            d = first_seen.get(norm(c))
             if d:
                 c["updated"] = d
             else:

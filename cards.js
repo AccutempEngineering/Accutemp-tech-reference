@@ -414,6 +414,76 @@ window.ACCUTEMP_DATA = {
          "text": "Is TESP inside the nameplate ESP range?"
         }
        ]
+      },
+      {
+       "id": "rtu-153",
+       "title": "Trane Voyager II/III hot surface ignitor (HSI): specs &amp; checkout",
+       "level": "sub",
+       "tags": [
+        "combustion"
+       ],
+       "intro": "On Voyager II/III staged gas heat and modulating gas heat, the hot surface ignitor (HSI, also spelled igniter) does two jobs: it lights the burner and it proves flame. In Sept 2021 Trane changed HSI manufacturers, and the cold resistance range changed with it. Identify the kit before judging ohms or amps: Coorstek <b>KIT03033</b> (x13130447010, up to Sept 2021) or SCP <b>KIT03033USA</b> (x13710056001, Sept 2021 to current).",
+       "rows": [
+        [
+         "Safety",
+         "Shut off gas and LOTO the unit, then verify de-energized with a proven meter before removing or ohming the HSI. Only energize for amp and flame checks with hands clear of the burner. Follow Accutemp safety rules."
+        ],
+        [
+         "Handling",
+         "Silicon carbide element: never touch the element end. Moisture or oils from hands can make it fail when energized. Avoid rough handling, vibration and shock, especially when removing it for service. Check new parts when you buy them."
+        ],
+        [
+         "1. Cold resistance (75&deg;F &plusmn;5&deg;F)",
+         "Coorstek KIT03033: 40 to 80 &Omega;. SCP KIT03033USA: 65 to 120 &Omega;."
+        ],
+        [
+         "2. Amp draw (energized)",
+         "Coorstek KIT03033: 3.5 to 3.9 A @ 132 VAC. SCP KIT03033USA: 3.3 to 3.7 A @ 116 VAC."
+        ],
+        [
+         "3. Visual",
+         "Look for cracks or damage in the element. Lines that look like dust or soot mean a crack that has not fully separated: replace it."
+        ],
+        [
+         "4. Flame signal",
+         "Use the \"Flame Check\" terminals on the IGN board with a DC voltmeter. 1 VDC = 1 &micro;A DC. Typical good flame signal: 2 to 8 &micro;A DC."
+        ],
+        [
+         "Supply voltage (TNS2)",
+         "HSI power comes from TNS2 secondary terminals X1 and X2: should read 105 to 132 VAC. X2 should be grounded. Confirm the TNS2 primary tap (H2 or H3) matches the unit input voltage. For other voltages, see the unit wiring diagram."
+        ],
+        [
+         "Tip to housing",
+         "Coorstek KIT03033: about 3.34\" from the element tip to the back of the housing. SCP KIT03033USA: about 3.65\"."
+        ],
+        [
+         "Common failure causes",
+         "Moisture or oils from handling, input voltage problems (TNS2 out of range or wrong tap), vibration or shock."
+        ]
+       ],
+       "tip": "A good ohm reading for one kit can look bad for the other (65 to 80 &Omega; is in range for both, 85 &Omega; is only good on KIT03033USA). Read the kit number before condemning the ignitor.",
+       "sources": [
+        {
+         "label": "Manufacturer source",
+         "url": "https://support.trane.com/hc/en-us/articles/5146745796237-Hot-Surface-Ignitor-HSI-Troubleshooting-and-Specifications",
+         "name": "Hot Surface Ignitor (HSI) Troubleshooting and Specifications, Trane Commercial HVAC Help Center"
+        }
+       ],
+       "quickCheck": [
+        {
+         "label": "1. Cold resistance (75&deg;F &plusmn;5&deg;F)",
+         "text": "Coorstek KIT03033: 40 to 80 &Omega;. SCP KIT03033USA: 65 to 120 &Omega;."
+        },
+        {
+         "label": "2. Amp draw (energized)",
+         "text": "Coorstek KIT03033: 3.5 to 3.9 A @ 132 VAC. SCP KIT03033USA: 3.3 to 3.7 A @ 116 VAC."
+        },
+        {
+         "label": "4. Flame signal",
+         "text": "Typical good flame signal: 2 to 8 &micro;A DC."
+        }
+       ],
+       "updated": "2026-11-09"
       }
      ]
     },

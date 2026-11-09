@@ -85,6 +85,7 @@ def serve(directory):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--old-ref", default="79ecb71")
+    ap.add_argument("--allow-new", default="", help="comma-separated ids of cards added since --old-ref")
     ap.add_argument("--chrome", default=shutil.which("google-chrome") or shutil.which("chromium"))
     a = ap.parse_args()
     tmp = tempfile.mkdtemp()
@@ -100,8 +101,13 @@ def main():
         N = pg.evaluate(NEW_JS)
         b.close()
     fields = ["tab", "title", "level", "tags", "parent", "text", "links", "imgs"]
+    new_ok = set(filter(None, a.allow_new.split(",")))
+    added = [c["id"] for c in N["cards"] if c["id"] in new_ok]
+    N["cards"] = [c for c in N["cards"] if c["id"] not in new_ok]
     oi = {c["id"]: (i, c) for i, c in enumerate(O["cards"])}
     ni = {c["id"]: (i, c) for i, c in enumerate(N["cards"])}
+    if new_ok:
+        print("new cards (not in old page, skipped):", ", ".join(added) or "none found")
     bad = []
     if list(oi) != list(ni):
         bad.append(("ORDER/ID SET", f"old {len(oi)} ids, new {len(ni)} ids"))
