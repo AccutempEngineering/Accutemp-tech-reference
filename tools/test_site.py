@@ -71,7 +71,8 @@ def main():
             check(opened, f"tab {t + 1}: Expand all opens every card")
             pg.click("text=Collapse all")
             check(pg.evaluate("[...document.querySelectorAll('details.cd')].every(d => !d.open)"), f"tab {t + 1}: Collapse all closes every card")
-        check(total >= 152, f"all cards rendered across tabs ({total})")
+        check(total >= 162, f"all cards rendered across tabs ({total})")
+        check(ntabs == 3 and "Tests" not in pg.inner_text("#tabbar"), f"hidden Tests tab is not shown ({ntabs} tabs)")
         small = pg.evaluate("""[...document.querySelectorAll('#tabbar button, .tools button, #filterbtn, #q')].filter(e => e.getBoundingClientRect().height < 44).length""")
         check(small == 0, "main controls are at least 44px tall")
         # back to top
@@ -87,7 +88,9 @@ def main():
             "rgecyb": "Rheem Classic (RGECYB)", "RGECYB-048": "Rheem Classic (RGECYB)", "transformer": "Transformer keeps failing",
             "flame sens": "Flame sensing", "tesp": "Total external static pressure", "Gasket": "Door won't seal",
             "kit03033": "Trane Voyager", "kit03033usa": "Trane Voyager", "hsi": "Trane Voyager", "igniter": "Trane Voyager",
-            "ignitor": "Trane Voyager", "voyager": "Trane Voyager", "superheat": None, "r410a": None, "City Multi": None,
+            "ignitor": "Trane Voyager", "voyager": "Trane Voyager", "superheat": None, "City Multi": None,
+            "r410a": "R-410A P-T chart", "r-454b": "R-454B P-T chart", "448a": "R-448A P-T chart", "407c pt": "R-407C P-T chart",
+            "unit heater": "Gas unit heater", "thermocouple": "Gas unit heater", "modine": "Gas unit heater",
         }
         for q, want in cases.items():
             head, titles = search(pg, q)
@@ -116,6 +119,18 @@ def main():
         check("Last updated:" in pg.inner_text("#walk-152 .updated"), "Last updated line shows")
         if a.shots:
             pg.screenshot(path=os.path.join(a.shots, "3-phone-card-quickcheck.png"))
+        # reviewed date + sources line + P-T table
+        pg.goto(base + "#pt-155"); pg.wait_for_timeout(400)
+        check(pg.evaluate("document.getElementById('pt-155').open"), "deep link #pt-155 opens the R-410A chart")
+        check("Reviewed:" in pg.inner_text("#pt-155 .cardmeta .reviewed"), "Reviewed line shows on a reviewed card")
+        check(pg.locator("#pt-155 .cardmeta .srcline a").count() >= 2, "sources line lists chart and second source")
+        check(pg.locator("#pt-155 table.pt tbody tr").count() > 50, "R-410A table rows render")
+        check(pg.evaluate("document.documentElement.scrollWidth") <= 375, "P-T table fits 375px without sideways scroll")
+        if a.shots:
+            pg.screenshot(path=os.path.join(a.shots, "5-phone-pt-chart.png"))
+        pg.goto(base + "#uh-154"); pg.wait_for_timeout(400)
+        check(pg.locator("#uh-154 .quickcheck").count() == 1 and pg.locator("#uh-154 .cardmeta .reviewed").count() == 1, "unit heater card shows Check this first and Reviewed")
+        check(pg.locator("#rtu-99 .quickcheck").count() == 1, "new Check this first box renders (rtu-99)")
         # offline
         pg.goto(base); pg.wait_for_timeout(500)
         pg.evaluate("navigator.serviceWorker.ready.then(() => true)")
@@ -124,7 +139,7 @@ def main():
         ctx.set_offline(True)
         pg.reload(); pg.wait_for_selector("details.cd", timeout=8000)
         n = pg.evaluate("document.querySelectorAll('#tabbar button').length")
-        check(n == 4, "offline reload still shows the page")
+        check(n == 3, "offline reload still shows the page")
         head, titles = search(pg, "rgecyb")
         check(bool(titles), "offline search works")
         check(pg.is_visible("#netstate"), "offline badge shows")
@@ -145,7 +160,7 @@ def main():
         # the supply finder worker must not wipe the field reference offline copy
         ctx.set_offline(True)
         pg.goto(base); pg.wait_for_selector("details.cd", timeout=8000)
-        check(pg.locator("#tabbar button").count() == 4, "field reference still opens offline after visiting supplyfinder")
+        check(pg.locator("#tabbar button").count() == 3, "field reference still opens offline after visiting supplyfinder")
         ctx.set_offline(False)
         # desktop
         d = b.new_page(viewport={"width": 1280, "height": 900})

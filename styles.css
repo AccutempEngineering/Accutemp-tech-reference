@@ -57,6 +57,15 @@ details[open] > .card .arrow { transform: rotate(180deg); color: var(--navy); }
 .quickcheck ul { margin: 0; padding-left: 18px; }
 .quickcheck li { margin: 3px 0; }
 .updated { font-size: 12px; color: #555555; margin-top: 8px; }
+.cardmeta { font-size: 12px; color: #444444; margin-top: 6px; line-height: 1.45; overflow-wrap: anywhere; }
+.cardmeta .reviewed { background: #eaf4ea; border-left: 3px solid #2e7d32; padding: 4px 8px; border-radius: 4px; margin-bottom: 4px; }
+.cardmeta .srcline a { color: #14324f; text-decoration: underline; }
+.ptwrap { max-height: 70vh; overflow-y: auto; margin: 6px 0 10px; border: 1px solid #d4d4d4; border-radius: 6px; background: #ffffff; }
+table.pt { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+table.pt th { position: sticky; top: 0; background: #14324f; color: #ffffff; font-size: 12px; font-weight: 600; padding: 6px 6px; text-align: right; line-height: 1.25; }
+table.pt td { padding: 5px 10px 5px 6px; text-align: right; border-top: 1px solid #ececec; }
+table.pt th:first-child, table.pt td:first-child { text-align: left; font-weight: 600; }
+table.pt tbody tr:nth-child(even) td { background: #f4f7fa; }
 mark { background: #ffe066; color: #111111; padding: 0 1px; border-radius: 2px; }
 .reshead { font-size: 13.5px; color: #333333; margin: 2px 0 10px; }
 .result { margin-bottom: 4px; }

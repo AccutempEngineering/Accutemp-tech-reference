@@ -60,7 +60,7 @@
       indexNodes(n.content || [], tabIdx, parents.concat([n]));
     });
   }
-  DATA.tabs.forEach(function (t, i) { indexNodes(t.content, i, []); });
+  DATA.tabs.forEach(function (t, i) { if (!t.hidden) indexNodes(t.content, i, []); });
   var indexed = false;
   function buildSearchIndex() {
     if (indexed) return;
@@ -68,6 +68,7 @@
       var body = htmlText(e.own);
       var tagText = (e.card.tags || []).map(function (t) { return t + " " + (chipLabel[t] || ""); }).join(" ");
       var crumb = DATA.tabs[e.tab].label + " " + e.parents.map(function (p) { return htmlText(p.title); }).join(" ");
+      crumb += " " + (e.card.sources || []).map(function (s) { return htmlText(s.name || ""); }).join(" ");
       e.bodyText = body;
       e.nTitle = norm(e.titleText); e.cTitle = e.nTitle.replace(/ /g, "");
       e.nBody = norm(body); e.cBody = e.nBody.replace(/ /g, "");
@@ -114,6 +115,22 @@
       return typeof q === "string" ? "<li>" + q + "</li>" : "<li><b>" + q.label + ":</b> " + q.text + "</li>";
     }).join("") + "</ul></div>";
   }
+  // Reviewed date (kept apart from "Last updated") and a sources line for sources not already linked in the card body.
+  function metaHtml(card, bodySoFar) {
+    var out = "";
+    if (card.reviewed) {
+      out += '<div class="reviewed"><b>Reviewed:</b> ' + fmtDate(card.reviewed) + (card.reviewNote ? ". " + card.reviewNote : "") + "</div>";
+    }
+    var extra = (card.sources || []).filter(function (s) {
+      return bodySoFar.indexOf('href="' + s.url + '"') === -1 && bodySoFar.indexOf('href="' + esc(s.url) + '"') === -1;
+    });
+    if (extra.length) {
+      out += '<div class="srcline"><b>Sources:</b> ' + extra.map(function (s) {
+        return (s.label ? s.label + ": " : "") + '<a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + (s.name || s.url) + "</a>" + (s.date ? " (" + s.date + ")" : "");
+      }).join("; ") + "</div>";
+    }
+    return out ? '<div class="cardmeta">' + out + "</div>" : "";
+  }
   function cardHtml(card, opts) {
     opts = opts || {};
     var cls = "card" + (card.level === "sub" ? " sub" : "");
@@ -121,21 +138,24 @@
     var h = '<details class="cd' + tags + '" id="' + esc(card.id) + '" data-tags="' + esc((card.tags || []).join(" ")) + '"' + (opts.open ? " open" : "") + ">";
     h += '<summary class="' + cls + '"><span class="ctitle">' + card.title + (opts.snip ? '<span class="snip">' + opts.snip + "</span>" : "") + '</span><span class="arrow">&#9660;</span></summary>';
     h += '<div class="accordion-body">' + quickCheckHtml(card);
+    var own = "";
     if (card.content && card.content.length) {
       card.content.forEach(function (n) {
         if (n.id) { if (!opts.ownOnly) h += cardHtml(n); }
-        else h += n.html;
+        else { h += n.html; own += n.html; }
       });
     } else {
-      h += ownHtml(card);
+      own = ownHtml(card); h += own;
     }
     if (card.updated) h += '<div class="updated">Last updated: ' + fmtDate(card.updated) + "</div>";
+    h += metaHtml(card, own);
     h += "</div></details>";
     return h;
   }
 
   var tabbar = document.getElementById("tabbar");
   tabbar.innerHTML = DATA.tabs.map(function (t, i) {
+    if (t.hidden) return "";
     return '<button type="button" data-tab="' + i + '"><span class="icon">' + t.icon + "</span>" + t.label + "</button>";
   }).join("");
 
@@ -212,7 +232,7 @@
 
   function syncUi() {
     var searching = !!(state.q.trim() || state.chip);
-    Array.prototype.forEach.call(tabbar.children, function (b, i) { b.classList.toggle("on", !searching && i === state.tab); });
+    Array.prototype.forEach.call(tabbar.children, function (b) { b.classList.toggle("on", !searching && +attr(b, "data-tab") === state.tab); });
     Array.prototype.forEach.call(chipsEl.children, function (b) { b.classList.toggle("on", attr(b, "data-chip") === state.chip && !!state.chip); });
     var af = document.getElementById("activefilter");
     af.classList.toggle("show", !!state.chip);
@@ -281,7 +301,7 @@
   window.addEventListener("online", netUi); window.addEventListener("offline", netUi); netUi();
 
   // ---------- start ----------
-  try { var saved = +localStorage.getItem("accutemp-tab"); if (saved >= 0 && saved < DATA.tabs.length) state.tab = saved; } catch (e) {}
+  try { var saved = +localStorage.getItem("accutemp-tab"); if (saved >= 0 && saved < DATA.tabs.length && !DATA.tabs[saved].hidden) state.tab = saved; } catch (e) {}
   if (!openFromHash()) render();
 
   if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1")) {

@@ -26,7 +26,7 @@ Ask Grok Bot: "Add a card to the tech reference under (section) about (topic)." 
  ],
  "tip": "One short field tip.",
  "sources": [
-  {"label": "Manufacturer source", "url": "https://example.com/manual.pdf", "name": "Maker manual name"}
+  {"label": "Manufacturer source", "url": "https://example.com/manual.pdf", "name": "Maker manual name", "date": "May 2026"}
  ],
  "quickCheck": [
   {"label": "1. First check", "text": "What to look at first."}
@@ -47,9 +47,15 @@ Ask Grok Bot: "Add a card to the tech reference under (section) about (topic)." 
 | `intro` | no | Opening paragraph. |
 | `rows` | no | The step / reading table: each row is `["Label", "Text"]`. |
 | `tip` | no | Shows as "Field tip:". |
-| `sources` | no | Links shown at the bottom of the card. |
+| `sources` | no | Where the card's facts come from: `name`, `url`, and if known `label` and `date` (the document's own date or revision). Simple cards show them in the card body. For cards stored as `content` HTML, any source that is not already linked in the card text shows on a "Sources:" line at the bottom. |
+| `reviewed` | no | Date (`"YYYY-MM-DD"`) the card's specs were last checked against its cited sources. Shows as a green "Reviewed:" line, kept separate from "Last updated". Only set it when you actually compared every spec on the card to a source listed in `sources`. Never set it to make a card look checked. |
+| `reviewNote` | no | One sentence after the Reviewed date saying what was checked against what. |
 | `quickCheck` | no | Optional yellow "Check this first" box at the top of the card. Only copy steps that are already written in the same card. Leave it out if the card has no clear first steps. |
 | `updated` | auto | "Last updated" date. Do not type it: it comes from git history (see below). |
+
+If a value on a card does not match its source, do not change it quietly and do not mark the card Reviewed. Write down both numbers and the source and ask Justin which is right.
+
+To hide a whole tab (for example one that has no real content yet), add `"hidden": true` to that tab in the `"tabs"` list. Its button and its cards disappear from the page and from search. Remove the line to show it again.
 
 Older cards store their text in a `"content"` list of `{"html": ...}` pieces. That is the original page text copied exactly; edit the words inside the quotes if needed, and leave the tags around them alone.
 
@@ -65,6 +71,6 @@ Each card's "Last updated" date is the date of the commit where its current text
 
 ## Checks (for whoever edits the code)
 
-* `python3 tools/verify_cards.py --old-ref 79ecb71` compares every card against the last single-file version of the page.
+* `python3 tools/verify_cards.py --old-ref <commit>` compares every card against an older version of the page (a cards.js commit, or 79ecb71 for the last single-file page). Use `--allow-new` for added card ids and `--allow-diff id=field+field,...` for changes you made on purpose (for example `eq-87=links`). Anything else that changed fails the check.
 * `python3 tools/test_site.py` runs phone layout, search, filter and offline checks in headless Chrome (needs `pip install playwright`).
-* The offline copy is handled by `sw-ref.js`. Bump `VERSION` there only if its caching rules change; card edits do not need it.
+* The offline copy is handled by `sw-ref.js`. Bump `VERSION` there when app.js, styles.css or the caching rules change (it is `accutemp-ref-v2` as of Nov 13, 2026); card-only edits do not need it.

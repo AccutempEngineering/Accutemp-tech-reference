@@ -2,7 +2,7 @@
    Network first: when there is signal, techs always get the newest cards.
    No signal: the last copy saved on the phone is used.
    Bump VERSION when this file's caching rules change. The supplyfinder/ page has its own worker and is left alone. */
-var VERSION = "accutemp-ref-v1";
+var VERSION = "accutemp-ref-v2";
 var CORE = ["./", "index.html", "app.js", "styles.css", "cards.js", "app.webmanifest",
   "app-icon-180.png", "app-icon-192.png", "app-icon-512.png",
   "refs/capacitor-load-test-guide.jpg", "refs/emerson-compressor-not-running-flowchart.jpg"];
