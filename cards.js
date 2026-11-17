@@ -518,6 +518,53 @@ window.ACCUTEMP_DATA = {
        ]
       },
       {
+       "id": "rtu-163",
+       "title": "Zoned system: static spikes as zones close (bypass damper check)",
+       "level": "sub",
+       "tags": [
+        "airflow",
+        "vav-bas"
+       ],
+       "intro": "Field-confirmed fix (Bow, Nov 2026). Replacement unit with a high-static blower: TESP normal with all zones open, climbs as zones close. Cause was a failed bypass damper actuator with the bypass stuck closed. The blower motor was fine, and once the bypass opened the problem stopped.",
+       "rows": [
+        [
+         "Safety",
+         "LOTO the unit disconnect and verify de-energized before working on blower or damper wiring. Follow Accutemp safety rules. Close panels before taking static readings."
+        ],
+        [
+         "1. Check the bypass first",
+         "Before condemning the blower, duct sizing or a supply restriction, verify the bypass damper actually strokes open."
+        ],
+        [
+         "2. Stroke it",
+         "Command the bypass open from the zone panel or controls, or drive it open manually, and watch the blade move."
+        ],
+        [
+         "3. Actuator power and signal",
+         "No movement: check actuator power and control signal at the actuator. Power and signal present but the blade won't move: actuator failed."
+        ],
+        [
+         "4. Fix",
+         "Replace the bypass actuator. Set the bypass to open at the static setpoint."
+        ],
+        [
+         "5. Verify",
+         "Close all but the smallest zone. Confirm TESP stays within the blower / unit nameplate ESP range and the bypass modulates open."
+        ]
+       ],
+       "tip": "High-static drives on zoned duct have nowhere to dump air when zones close, so a dead bypass shows up as high static and noise, not as a bad motor. See the Rheem RGECYB card step 8 for taking TESP with all zones vs the smallest zone.",
+       "quickCheck": [
+        {
+         "label": "1. Check the bypass first",
+         "text": "Before condemning the blower, duct sizing or a supply restriction, verify the bypass damper actually strokes open."
+        },
+        {
+         "label": "2. Stroke it",
+         "text": "Command the bypass open from the zone panel or controls, or drive it open manually, and watch the blade move."
+        }
+       ]
+      },
+      {
        "id": "rtu-153",
        "title": "Trane Voyager II/III hot surface ignitor (HSI): specs &amp; checkout",
        "level": "sub",
